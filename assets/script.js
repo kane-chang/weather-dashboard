@@ -1,32 +1,37 @@
 // TODO add API and query fetch calls
-var cityName = "London";
-var lat = 44.34
-var lon = 10.99
-var apiKey = "d1c99b80e20e8b69e763c4e6c7f5572b";
-var geocodingQuery = "http://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&appid=" + apiKey;
-// var forecastQuery = "api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon" + lon + "&appid=" + "a95b437b4c6c849e80cc1cc3ab83452a";
-var forecastQuery = "api.openweathermap.org/data/2.5/forecast?lat=44.34&lon=10.99&appid=" + apiKey;
-console.log(forecastQuery);
+// TODO fetch geocoding and forecast API
+async function fetchGeocodeForecast(event) {
+    event.preventDefault()
+    var cityName = searchInput.value.trim()
+    var apiKey = "d1c99b80e20e8b69e763c4e6c7f5572b";
+    var geocodingQuery = "http://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&appid=" + apiKey;
+    var forecastQ = await fetch(geocodingQuery)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            console.log(data[0]);
+            // var lat = 51.5098
+            // var lon = -0.1180
+            var lat = (data[0].lat);
+            var lon = (data[0].lon);
+            var forecastQuery = "https://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=a95b437b4c6c849e80cc1cc3ab83452a"
+            return forecastQuery
+        })
+    fetch(forecastQ)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            console.log(data);
+        })
+}
 
-// TODO fetch geocoding API
-fetch(geocodingQuery)
-.then(function (response) {
-    return response.json();
-})
-.then(function (data) {
-    console.log(data[0]);
-});
-
-// TODO fetch 5 day weather forecast API
-fetch(forecastQuery)
-.then(function (response) {
-    return response.json();
-})
-.then(function (data) {
-    console.log(data);
-});
 
 // TODO search eventlistener to pull API data
+var searchButton = document.querySelector('#search-button')
+var searchInput = document.querySelector('#search-input')
+searchButton.addEventListener("click", fetchGeocodeForecast)
 
 // TODO format and create city weather data HTML elements
 
