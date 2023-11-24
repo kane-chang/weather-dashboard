@@ -62,7 +62,7 @@ function createTodaySection(data) {
 // TODO format and create 5-day forecast data HTML elements
 function createForecastSection(data) {
     var secondsInADay = 86400
-    var 
+    // var 
 
 }
 
