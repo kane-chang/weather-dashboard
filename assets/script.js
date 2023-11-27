@@ -15,7 +15,7 @@ async function searchWeather(event) {
 
 async function fetchGeocodeForecast(cityName) {
     var apiKey = "d1c99b80e20e8b69e763c4e6c7f5572b";
-    var geocodingQuery = "http://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&appid=" + apiKey;
+    var geocodingQuery = "https://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&appid=" + apiKey;
     var forecastQ = await fetch(geocodingQuery)  //stores the geocode api returned data
         .then(function (response) {
             return response.json();
