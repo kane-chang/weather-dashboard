@@ -1,10 +1,16 @@
 // TODO add API and query fetch calls
 // TODO fetch geocoding and forecast API
-function searchWeather(event) {
+async function searchWeather(event) {
     event.preventDefault()
     var cityName = searchInput.value.trim()  //remove any unnecessary spaces at the start or end of the user's search input
-    fetchGeocodeForecast(cityName)
-    createCityButton(cityName);
+    var successfulFetch = await fetchGeocodeForecast(cityName)
+    if (successfulFetch) {
+        createCityButton(cityName);
+    }
+    if (historySection.children.length == 1) {
+        createClearHistoryButton()
+    }
+    searchInput.value = ""
 }
 
 async function fetchGeocodeForecast(cityName) {
@@ -35,7 +41,9 @@ async function fetchGeocodeForecast(cityName) {
                 console.log(data);
                 createTodaySection(data);
                 createForecastSection(data);
-            })
+
+            });
+        return true
     }
 };
 
@@ -58,7 +66,7 @@ function errorMessage() {
 function createTodaySection(data) {
     if (todaySection.children.length > 0) {
         while (todaySection.firstChild) {
-            todaySection.removeChild(todaySection.lastChild);        
+            todaySection.removeChild(todaySection.lastChild);
         }
     }
 
@@ -86,7 +94,7 @@ function createTodaySection(data) {
 function createForecastSection(data) {
     if (forecastSection.children.length > 0) {
         while (forecastSection.firstChild) {
-            forecastSection.removeChild(forecastSection.lastChild);        
+            forecastSection.removeChild(forecastSection.lastChild);
         };
     };
     var secondsInADay = 86400;
@@ -136,37 +144,69 @@ function createForecastSection(data) {
     };
 };
 
-// TODO search eventlistener to pull API data
-var searchButton = document.querySelector('#search-button');
-var searchInput = document.querySelector('#search-input');
-var searchDiv = document.querySelector('#input-div');
-var todaySection = document.querySelector('#today');
-var forecastSection = document.querySelector('#forecast');
-var historySection = document.querySelector('#history');
-
-searchButton.addEventListener("click", searchWeather);
-
-
 // TODO create a button function with every searched city
 function createCityButton(cityName) {
     var cityButton = document.createElement('button');
     cityButton.textContent = cityName;
     cityButton.setAttribute("class", "city-buttons");
     cityButton.setAttribute("data-city", cityName);
-    historySection.append(cityButton);
+    historySection.prepend(cityButton);
+    cityList.push(cityName)
+    localStorage.setItem("cityButtons", JSON.stringify(cityList))
 };
 
 // TODO click city button to display city information again
 function displayCity(event) {
-    if (event.target.matches('button')) {
+    if (event.target.matches('.city-buttons')) {
         console.log("matched");
         console.log(event.target);
         var selectedCity = event.target.getAttribute('data-city')
         fetchGeocodeForecast(selectedCity)
     };
-
 };
 
-historySection.addEventListener('click', displayCity)
 // TODO store buttons and their data to local storage
+// TODO retrieve local storage button on opening webpage
+function retrieveLocalStorage() {
+    cityStorage = localStorage.getItem("cityButtons");
+    localStorage.clear();
+    storedCityList = JSON.parse(cityStorage);
+    for (let i = 0; i < storedCityList.length; i++) {
+        createCityButton(storedCityList[i]);
+    };
+    createClearHistoryButton()
+};
+
+function createClearHistoryButton() {
+    var clearButton = document.createElement('button');
+    clearButton.textContent = "Clear Search History"
+    clearButton.setAttribute("id", "clear-history");
+    clearButton.setAttribute("class", "btn-primary mt-3");
+    historySection.append(clearButton);
+    clearButton.addEventListener('click', clearHistory)
+}
+
+function clearHistory() {
+    localStorage.clear()
+    if (historySection.children.length > 0) {
+        while (historySection.firstChild) {
+            historySection.removeChild(historySection.lastChild);
+        }
+    }
+}
+
+// TODO document selectors and event listeners 
+var searchButton = document.querySelector('#search-button');
+var searchInput = document.querySelector('#search-input');
+var searchDiv = document.querySelector('#input-div');
+var todaySection = document.querySelector('#today');
+var forecastSection = document.querySelector('#forecast');
+var historySection = document.querySelector('#history');
+var cityList = []
+
+searchButton.addEventListener("click", searchWeather);
+historySection.addEventListener('click', displayCity);
+if (localStorage.getItem("cityButtons") != null) {
+    retrieveLocalStorage()
+}
 
