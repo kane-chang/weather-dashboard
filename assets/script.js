@@ -1,8 +1,13 @@
 // TODO add API and query fetch calls
 // TODO fetch geocoding and forecast API
-async function fetchGeocodeForecast(event) {
+function searchWeather(event) {
     event.preventDefault()
     var cityName = searchInput.value.trim()  //remove any unnecessary spaces at the start or end of the user's search input
+    fetchGeocodeForecast(cityName)
+    createCityButton(cityName);
+}
+
+async function fetchGeocodeForecast(cityName) {
     var apiKey = "d1c99b80e20e8b69e763c4e6c7f5572b";
     var geocodingQuery = "http://api.openweathermap.org/geo/1.0/direct?q=" + cityName + "&appid=" + apiKey;
     var forecastQ = await fetch(geocodingQuery)  //stores the geocode api returned data
@@ -30,7 +35,6 @@ async function fetchGeocodeForecast(event) {
                 console.log(data);
                 createTodaySection(data);
                 createForecastSection(data);
-                createCityButton(cityName);
             })
     }
 };
@@ -140,7 +144,7 @@ var todaySection = document.querySelector('#today');
 var forecastSection = document.querySelector('#forecast');
 var historySection = document.querySelector('#history');
 
-searchButton.addEventListener("click", fetchGeocodeForecast);
+searchButton.addEventListener("click", searchWeather);
 
 
 // TODO create a button function with every searched city
@@ -149,9 +153,20 @@ function createCityButton(cityName) {
     cityButton.textContent = cityName;
     cityButton.setAttribute("class", "city-buttons");
     cityButton.setAttribute("data-city", cityName);
-    historySe   ction.append(cityButton);
+    historySection.append(cityButton);
 };
 
+// TODO click city button to display city information again
+function displayCity(event) {
+    if (event.target.matches('button')) {
+        console.log("matched");
+        console.log(event.target);
+        var selectedCity = event.target.getAttribute('data-city')
+        fetchGeocodeForecast(selectedCity)
+    };
 
+};
+
+historySection.addEventListener('click', displayCity)
 // TODO store buttons and their data to local storage
 
