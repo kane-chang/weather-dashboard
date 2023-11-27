@@ -22,10 +22,10 @@ async function fetchGeocodeForecast(cityName) {
         })
         .then(function (data) {
             if (data[0] == undefined) {
-                console.log('oops');
+                // console.log('oops');
                 errorMessage();
             } else {
-                console.log(data[0]);
+                // console.log(data[0]);
                 var lat = (data[0].lat);
                 var lon = (data[0].lon);
                 var forecastQuery = "https://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&units=metric&appid=a95b437b4c6c849e80cc1cc3ab83452a";
@@ -38,7 +38,7 @@ async function fetchGeocodeForecast(cityName) {
                 return response.json();
             })
             .then(function (data) {
-                console.log(data);
+                // console.log(data);
                 createTodaySection(data);
                 createForecastSection(data);
 
@@ -102,7 +102,7 @@ function createForecastSection(data) {
     var forecastHeader = document.createElement('h3');
     var rowDiv = document.createElement('div');
     forecastHeader.textContent = "5-Day Forecast:";
-    console.log(fiveDayArray);
+    // console.log(fiveDayArray);
 
     forecastSection.append(forecastHeader, rowDiv);
 
@@ -122,10 +122,10 @@ function createForecastSection(data) {
                 weatherCard.setAttribute('class', 'card text-white bg-dark col-sm mx-3');
                 cardBodyDiv.setAttribute('class', 'card-body');
                 cardTitle.setAttribute('class', 'card-title');
-                console.log(fiveDayArray[j]);
-                console.log(data.list[i].dt_txt);
+                // console.log(fiveDayArray[j]);
+                // console.log(data.list[i].dt_txt);
                 cardDate = dayjs().add(j + 1, 'day').format('DD/MM/YYYY');
-                console.log(cardDate);
+                // console.log(cardDate);
                 cardTitle.textContent = cardDate;
 
                 var cardIconCode = (data.list[i].weather[0].icon);
@@ -158,8 +158,8 @@ function createCityButton(cityName) {
 // TODO click city button to display city information again
 function displayCity(event) {
     if (event.target.matches('.city-buttons')) {
-        console.log("matched");
-        console.log(event.target);
+        // console.log("matched");
+        // console.log(event.target);
         var selectedCity = event.target.getAttribute('data-city')
         fetchGeocodeForecast(selectedCity)
     };
